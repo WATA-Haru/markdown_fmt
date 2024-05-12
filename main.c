@@ -4,15 +4,18 @@
 #include <stdbool.h>
 #include <assert.h> //for test
 
-//typedef struct s_token
-//{
-//	char			*element;
-//	int				len;
-//	int				x;
-//	int				y;
-//	s_token		*next;
-//}								t_token;
-//
+static int		between_vertical_len(const char *str);
+static char	*allocate_elm(const char *str);
+static char	*strtrim(const char *s1, const char *set);
+
+typedef struct s_cell
+{
+	char							*element;
+	int								len;
+	int								x;
+	int								y;
+	struct s_cell			*next;
+}								t_cell;
 
 static int		between_vertical_len(const char *str)
 {
@@ -154,11 +157,96 @@ int test ()
 
 	// NULL strtrim is tested
 	printf("null_case: %s\n", allocate_elm(NULL));
+
+	// input struct
+	
   return 0;
 }
 
+//int	main(void)
+//{
+//	test();
+//	return 0;
+//}
+
+// tmp function allocate struct
 int	main(void)
 {
-	test();
+	char input[] = "| header1 | header2 |\n"
+									"| ------- | --- |\n"
+									"| 1  | 2          |\n"
+									"| 3     | 4 |";
+	int				i = 0;
+	int				x = 0;
+	int				y = 0;
+	char			*original;
+	char			*trimmed;
+	t_cell		*cell = NULL;
+	t_cell		**pp;
+
+	pp = &cell;
+	while (input[i])
+	{
+		if (input[i] == '\n') 
+		{
+			x = 0;
+			y++;
+		}
+		if (input[i] == '|' && (input[i+1] != '\n') && (input[i+1] != '\0'))
+		{
+			original = allocate_elm(&input[i]);
+			if (!original)
+			{
+				//todo: lstclear
+				return -1;
+			}
+			trimmed = strtrim(original, " ");
+			free(original);
+			if (!trimmed)
+			{
+				//todo: lstclear
+				return -1;
+			}
+
+			*pp = (t_cell *)malloc(sizeof(t_cell));
+			if ((*pp) == NULL)
+			{
+				//todo: lstclear
+				return -1;
+			}
+			(*pp)->element = trimmed;
+			(*pp)->len = strlen(trimmed);
+			(*pp)->x = x;
+			(*pp)->y = y;
+			(*pp)->next = NULL;
+			x++;
+			pp = &(*pp)->next;
+		}
+		i++;
+	}
+
+	// markdown outputter
+	//while (cell)
+	//{	
+	//	printf("====== elements =======\n");
+	//	printf("cell->element: %s\n", cell->element);
+	//	printf("cell->len: %d\n", cell->len);
+	//	printf("cell->x: %d\n", cell->x);
+	//	printf("cell->y: %d\n", cell->y);
+	//	printf("cell->next: %p\n", cell->next);
+	//	cell = cell->next;
+	//}
+
+	while (cell)
+	{	
+		printf("====== elements =======\n");
+		printf("cell->element: %s\n", cell->element);
+		printf("cell->len: %d\n", cell->len);
+		printf("cell->x: %d\n", cell->x);
+		printf("cell->y: %d\n", cell->y);
+		printf("cell->next: %p\n", cell->next);
+		cell = cell->next;
+	}
+
 	return 0;
 }
