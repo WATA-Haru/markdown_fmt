@@ -58,10 +58,24 @@
 | Fishmans      | http://www.fishmans.jp/  |
 ```
 
+## Rule
+- Common to all rows
+    - One space between `|` and value at left end of cell
+- Header and body rows
+    - Values are left-aligned.
+    - Spaces in values are kept as they are.
+- Delimiter rows
+    - One space between `|` and the value at both ends of the cell
+    - At least three `|`s should be connected.
+
 ## How to build
 generate exec file
 ```
 make
+```
+
+exec it
+```
 ./markdown_fmt
 ```
 
@@ -70,7 +84,7 @@ delete object files
 make clean
 ```
 
-delete exec file
+delete object files and exec file
 ```
 make fclean
 ```
