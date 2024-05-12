@@ -172,10 +172,15 @@ int test ()
 // tmp function allocate struct
 int	main(void)
 {
-	char input[] = "| header1 | header2 |\n"
-									"| ------- | --- |\n"
-									"| 1  | 2          |\n"
-									"| 3     | 4 |";
+//	char input[] = "| header1 | header2 |\n"
+//									"| ------- | --- |\n"
+//									"| 1  | 2          |\n"
+//									"| 3     | 4 |";
+	char input[] = "|             artist name|    url|\n"
+									"| --- | ------ |\n"
+									"|Tame Impala                  | https://tameimpala.com/        |\n"
+									"|     cocteau twins|  https://cocteautwins.com        |\n"
+									"|Fishmans|                               http://www.fishmans.jp/                             |";
 	int				i = 0;
 	int				x = 0;
 	int				y = 0;
@@ -226,6 +231,7 @@ int	main(void)
 	}
 
 	// markdown outputter
+
 	//while (cell)
 	//{	
 	//	printf("====== elements =======\n");
@@ -237,16 +243,59 @@ int	main(void)
 	//	cell = cell->next;
 	//}
 
+	int		maxlen = 0;
+	int		endx = 0;
+	t_cell			*save_start;
+	save_start = cell;
+
+	//calc maxlen
 	while (cell)
 	{	
-		printf("====== elements =======\n");
-		printf("cell->element: %s\n", cell->element);
-		printf("cell->len: %d\n", cell->len);
-		printf("cell->x: %d\n", cell->x);
-		printf("cell->y: %d\n", cell->y);
-		printf("cell->next: %p\n", cell->next);
+		if (cell->len > maxlen)
+			maxlen = cell->len;
+		if (cell->x > endx)
+			endx = cell->x;
 		cell = cell->next;
 	}
 
+	//TODO: markdownは最後改行の方がターミナルの出力きれいだから改行しちゃおう！
+	cell = save_start;
+	while (cell)
+	{	
+		if (cell->y == 1)
+		{
+			printf("| ");
+			i = 0;
+			while (i < maxlen)
+			{
+				printf("-");
+				i++;
+			}
+			printf(" ");
+			if (cell->x == endx)
+			{
+				printf("|");
+				printf("\n");
+			}
+		}
+		else
+		{
+			printf("| ");
+			printf("%s", cell->element);
+			i = 0;
+			while (i < maxlen - (cell->len))
+			{
+				printf(" ");
+				i++;
+			}
+			printf(" ");
+			if (cell->x == endx)
+			{
+				printf("|");
+				printf("\n");
+			}
+		}
+		cell = cell->next;
+	}
 	return 0;
 }
